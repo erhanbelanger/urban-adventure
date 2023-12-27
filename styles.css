@@ -71,12 +71,12 @@ margin-top: o.9em;
     padding: 0.7em 1.8em;
 }
 
-.question{
+.count-of-question{
     margin-bottom: 1.25em;
     font-weight: 600;
 }
 
-.options-div{
+.option-div{
     font-size: 0.9em;
     width: 100%;
     padding: 1em;
@@ -114,7 +114,7 @@ cursor: not-allowed;
     border-color: #d32f2f;
 }
 
-.incorrect{
+.correct{
     background-color: #e7f6d5;
     color: #689f38;
     border-color: #689f38;
