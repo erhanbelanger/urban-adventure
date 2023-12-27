@@ -2,30 +2,30 @@
 let timeLeft = document.querySelector(".time-left");
 let quizContainer = document.getElementById("container");
 let nextBtn = document.getElementById("next-button");
-let countOfQuestion = document.querySelector(".questions");
+let countOfQuestion = document.querySelector(".number-of-question");
 let displayContainer = document.getElementById("display-container");
 let scoreContainer = document.querySelector(".score-container");
 let restart = document.getElementById("restart");
 let userScore = document.getElementById("user-score");
-let startScreen = document.getElementById("user-score");
+let startScreen = document.querySelector(".start-screen");
 let startButton = document.getElementById("start-button");
 let questionCount;
 let scoreCount = 0;
-let count = 6;
+let count = 11;
 let countdown;
-// 5 questions for the quiz
+// 10 questions for the quiz
 const quizArray = [
   {
     id: '0',
     question: "Commonly used data types DO NOT include:",
-    options: ["alerts", "booleans", "alerts", "numbers"],
+    options: ["alerts", "booleans", "string", "numbers"],
     correct: "alerts",
   },
   {
     id: '1',
-    question: "Inside which HTML element do we put the JavaSCript?:",
-    options: ["<script>", "<javascript", "<js>", "<scripting>"],
-    correct: "<script>",
+    question: "Inside which HTML element do we put the JavaScript?:",
+    options: ["script", "javascript", "js", "scripting"],
+    correct: "script",
   },
   {
     id: '2',
@@ -52,6 +52,41 @@ const quizArray = [
     options: ["default", "catch", "label", "try"],
     correct: "default",
   },
+  {
+    id: '5',
+    question:
+      "Where is the correct place to insert a JavaScript?",
+    options: ["both the head and body", "the body section", "the head section", "the javascript istelf"],
+    correct: "both the head and the body",
+  },
+  {
+    id: '6',
+    question:
+      "An external JavaScript must contain the script",
+    options: ["true", "false"],
+    correct: "false",
+  },
+  {
+    id: '7',
+    question:
+      "What is the command to display a prompt?",
+    options: ["prompt", "console.log", "boolean", "IDK"],
+    correct: "prompt",
+  },
+  {
+    id: '8',
+    question:
+      "What is the correct way to declare a variable that you can change?",
+    options: ["let myName", "const myName", "var myName", "myName"],
+    correct: "let myName",
+  },
+  {
+    id: '9',
+    question:
+      "What is the correct way to generate a random number?",
+    options: ["Number.random()", "math.Random()", "math.random()", "Math.random()"],
+    correct: "Math.random()",
+  },
 ];
 
 restart.addEventListener("click", () => {
@@ -72,10 +107,10 @@ nextBtn.addEventListener(
         "Your Score is" + scoreCount + "out of" + questionCount;
     } else {
       countOfQuestion.innerHTML =
-        questionCount + 1 + "of" + quizArray.length + ".question";
+        questionCount + 1 + "of" + quizArray.length + "question";
 
       quizDisplay(questionCount);
-      count; 6;
+      count = 11;
       clearInterval(countdown);
       timerDisplay();
     }
@@ -85,7 +120,7 @@ nextBtn.addEventListener(
 const timerDisplay = () => {
     countdown = setInterval(() => {
         count--;
-        timeLeft.innerHTML = `${count}`;
+        timeLeft.innerHTML = `${count}s`;
         if (count == 0) {
             clearInterval(countdown);
             displayNext();
@@ -94,7 +129,7 @@ const timerDisplay = () => {
 };
 
 const quizDisplay = (questionCount) => {
-    let quizCards = document.querySelectorAll('container-mid');
+    let quizCards = document.querySelectorAll('.container-mid');
 
     quizCards.forEach((card) => {
         card.classList.add('hide');
@@ -149,14 +184,28 @@ function checker(userOption){
                 element.classList.add('correct');
             }
         });
+        clearInterval(countdown);
+        options.forEach((element)=>{
+            element.disabled = true;
+        });
+        saveResultToLocalStorage();
     }
 
-    clearInterval(countdown);
-    options.forEach((element)=>{
-        element.disabled = true;
-    });
-
-
+    function saveResultToLocalStorage() {
+        // Retrieve existing results from local storage or initialize an empty array
+        let savedResults = JSON.parse(localStorage.getItem('quizResults')) || [];
+      
+        // Add the current result to the array
+        savedResults.push({
+          questionId: quizArray[questionCount].id,
+          userAnswer: userOption.innerText, // Assuming userOption is defined globally
+          correctAnswer: quizArray[questionCount].correct,
+        });
+      
+        // Save the updated results array back to local storage
+        localStorage.setItem('quizResults', JSON.stringify(savedResults));
+      }
+// resetting score at the end of the test
 function initial(){
     quizContainer.innerHTML = "";
     questionCount = 0;
@@ -179,3 +228,36 @@ window.onload = () => {
     startScreen.classList.remove('hide');
     displayContainer.classList.add('hide');
 };
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Grab the necessary elements
+    const scoresList = document.getElementById('scores');
+    const clearButton = document.getElementById('clear');
+  
+    // Load scores from local storage
+    const savedResults = JSON.parse(localStorage.getItem('quizResults')) || [];
+  
+    // Display scores in the scores.html page
+    savedResults.forEach((result) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Question ${result.questionId}: Your Answer - ${result.userAnswer}, Correct Answer - ${result.correctAnswer}`;
+      scoresList.appendChild(listItem);
+    });
+  
+    // Clear scores from local storage
+    clearButton.addEventListener('click', function () {
+      localStorage.removeItem('quizResults');
+      scoresList.innerHTML = ''; // Clear the displayed scores
+    });
+  });
+
+function displayScores() {
+    const scoresList = document.getElementById('scores');
+    const savedResults = JSON.parse(localStorage.getItem('quizResults')) || [];
+  
+    savedResults.forEach((result) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Question ${result.questionId}: Your Answer - ${result.userAnswer}, Correct Answer - ${result.correctAnswer}`;
+      scoresList.appendChild(listItem);
+    });
+  }
