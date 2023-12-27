@@ -1,29 +1,48 @@
+//adding variables and attaching them to their classes from HTML
 const startButton = document.getElementById('start-btn')
 const nextButton = document.getElementById('next-btn')
 const questionContainerElement = document.getElementById('question-container')
 const questionElement = document.getElementById('question')
 const answerButtonElement = document.getElementById('answer-buttons')
 
-let shuffledQuestions, currentQuestionIndex
+let shuffledQuestions, currentQuestionIndex, timer
 
 startButton.addEventListener('click', startGame)
 nextButton.addEventListener('click', () => {
+    clearTimeout(timer)
 currentQuestionIndex++
-setNextQeustion()
+setNextQuestion()
 })
-
+//starting game
 function startGame() {
 console.log('Started')
 startButton.classList.add('hide')
 shuffledQuestions = questions.sort(() => Math.random() - .5)
 currentQuestionIndex = 0
 questionContainerElement.classList.remove('hide')
-setNextQeustion()
+setNextQuestion()
 }
-
-function setNextQeustion() {
+// setting next question and timer consequences
+function setNextQuestion() {
     resetState()
+    if (currentQuestionIndex < shuffledQuestions.length) {
+        showQuestion(shuffledQuestions[currentQuestionIndex]);
+        startTimer();
+    } else {
+        endgame();
+    }
 showQuestion(shuffledQuestions[currentQuestionIndex])
+}
+//setting timer button
+function startTimer() {
+    let seconds = 60;
+    timer = setInterval(() => {
+seconds -= 5;
+if (seconds < 0) {
+    clearTimeout(timer);
+    selectAnswer();
+}
+    }, 5000);
 }
 
 function showQuestion(question) {
@@ -37,7 +56,7 @@ question.answers.forEach(answer => {
     }
     button.addEventListener('click', selectAnswer)
     answerButtonElement.appendChild(button)
-})
+});
 }
 
 function resetState() {
@@ -50,6 +69,7 @@ function resetState() {
 }
 
 function selectAnswer(e) {
+    clearTimeout(timer);
     const selectedButton = e.target
     const correct = selectedButton.dataset.correct
     setStatusClass(document.body, correct)
